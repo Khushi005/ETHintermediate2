@@ -1,60 +1,54 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-//import "hardhat/console.sol";
-
 contract Assessment {
     address payable public owner;
     uint256 public balance;
-
+    
     event Deposit(uint256 amount);
-    event Withdraw(uint256 amount);
+    
+    // New variables to track medicine purchases
+    uint256 public peracetamolBought = 0;
+    uint256 public aspirinBought = 0;
+    uint256 public penicillinBought = 0;
+    uint256 public totalBought = 0;
 
-    constructor(uint initBalance) payable {
+    // Modifier to check if sender is owner
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not the contract owner!");
+        _;
+    }
+
+    constructor() {
         owner = payable(msg.sender);
-        balance = initBalance;
     }
 
-    function getBalance() public view returns(uint256){
-        return balance;
+    // Function to buy Peracetamol
+    function buyPeracetamol() public onlyOwner {
+        // Logic to decide whether to buy Peracetamol
+        // Add your custom logic here
+        peracetamolBought += 1;
+        totalBought += 1;
     }
 
-    function deposit(uint256 _amount) public payable {
-        uint _previousBalance = balance;
-
-        // make sure this is the owner
-        require(msg.sender == owner, "You are not the owner of this account");
-
-        // perform transaction
-        balance += _amount;
-
-        // assert transaction completed successfully
-        assert(balance == _previousBalance + _amount);
-
-        // emit the event
-        emit Deposit(_amount);
+    // Function to buy Aspirin
+    function buyAspirin() public onlyOwner {
+        // Logic to decide whether to buy Aspirin
+        // Add your custom logic here
+        aspirinBought += 1;
+        totalBought += 1;
     }
 
-    // custom error
-    error InsufficientBalance(uint256 balance, uint256 withdrawAmount);
+    // Function to buy Penicillin
+    function buyPenicillin() public onlyOwner {
+        // Logic to decide whether to buy Penicillin
+        // Add your custom logic here
+        penicillinBought += 1;
+        totalBought += 1;
+    }
 
-    function withdraw(uint256 _withdrawAmount) public {
-        require(msg.sender == owner, "You are not the owner of this account");
-        uint _previousBalance = balance;
-        if (balance < _withdrawAmount) {
-            revert InsufficientBalance({
-                balance: balance,
-                withdrawAmount: _withdrawAmount
-            });
-        }
-
-        // withdraw the given amount
-        balance -= _withdrawAmount;
-
-        // assert the balance is correct
-        assert(balance == (_previousBalance - _withdrawAmount));
-
-        // emit the event
-        emit Withdraw(_withdrawAmount);
+    // Function to return the total number of products bought
+    function numberOfProducts() public view returns (uint256) {
+        return totalBought;
     }
 }
